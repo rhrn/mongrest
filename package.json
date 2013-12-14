@@ -1,6 +1,6 @@
 {
   "name": "mongrest",
-  "version": "0.0.1",
+  "version": "0.1.0",
   "description": "MongoDB collection RESTful wrapper",
   "main": "index.js",
   "scripts": {
