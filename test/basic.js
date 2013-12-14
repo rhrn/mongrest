@@ -5,10 +5,10 @@ var extend = require('util')._extend;
 
 module.exports = function(db) {
 
-  var collection = db.collection('rest.test');
+  var collection = db.collection('mongrest.basic');
   var model      = new Rest(collection);
 
-  describe('model live circle', function() {
+  describe('basic live circle', function() {
 
     before(function(done) {
       collection.remove(done);
@@ -29,8 +29,7 @@ module.exports = function(db) {
       var object = {
         a: "a"
       };
-      model.post(object, function(err, docs) {
-        doc = docs[0];
+      model.post(object, function(err, doc) {
         expect(err).to.be.null;
         expect(doc).to.be.object;
         expect(doc).to.have.property('_id');
@@ -40,8 +39,16 @@ module.exports = function(db) {
       });
     });
 
-    it('getOne() object', function(done) {
-      model.getOne(ID, function(err, doc) {
+    it('get() one object', function(done) {
+      model.get(ID, function(err, doc) {
+        expect(err).to.be.null;
+        expect(doc).to.deep.equal(DOC);
+        done();
+      });
+    });
+
+    it('get() one object with string id', function(done) {
+      model.get(ID.toString(), function(err, doc) {
         expect(err).to.be.null;
         expect(doc).to.deep.equal(DOC);
         done();
@@ -60,6 +67,18 @@ module.exports = function(db) {
       });
     });
 
+    it('put() object with string id', function(done) {
+      var put = extend({}, DOC);
+      put.updated = new Date();
+      expect(put).not.to.deep.equal(DOC);
+      model.put(ID.toString(), put, function(err, doc) {
+        expect(err).to.be.null;
+        expect(doc).to.deep.equal(put);
+        DOC = doc;
+        done();
+      });
+    });
+
     it('delete() object', function(done) {
       model.delete(ID, function(err, doc) {
         expect(doc).to.deep.equal(DOC);
@@ -67,8 +86,8 @@ module.exports = function(db) {
       });
     });
 
-    it('getOne() empty object', function(done) {
-      model.getOne(ID, function(err, doc) {
+    it('get() one empty object', function(done) {
+      model.get(ID, function(err, doc) {
         expect(err).to.be.null;
         expect(doc).to.be.null;
         done();
